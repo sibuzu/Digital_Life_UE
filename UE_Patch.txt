@@ -1,0 +1,5 @@
+
+You need to edit GameActivity.java file. 
+It’s located in “Unreal Engine\5.0\Engine\Build\Android\Java\src\com\epicgames\ue4” 
+and add this line AndroidThunkJava_KeepScreenOn(true); after “nativeResumeMainInit();”
+

@@ -61,7 +61,7 @@ void FReadMessageAsyncTask::DoWork() {
 
 				if (TempBuff.Num() >= 14) {
 					if (TempBuff[0] == 's' && TempBuff[TempBuff.Num() - 1] == 'd') {
-						GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, TEXT("服务器返回允许说话"));
+						T->MyDebug(FColor::Red, TEXT("服务器返回允许说话"));
 						AsyncTask(ENamedThreads::GameThread, [=] {
 							T->OnWaitServerData.Broadcast();
 						});
@@ -69,18 +69,18 @@ void FReadMessageAsyncTask::DoWork() {
 					}
 				}
 
-				GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("暂时读取到数据量：")) + FString::FromInt(NowSize));
+				T->MyDebug(FColor::Red, FString(TEXT("暂时读取到数据量：")) + FString::FromInt(NowSize));
 
 				if (TempBuff[TempBuff.Num() - 2] != '!' || TempBuff[TempBuff.Num() - 3] != '?') {
 
 					ReadBuff += TempBuff;
 					RecvSize += NowSize;
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-					GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, TEXT("等待更多数据中(没有发现终止符)"));
+					T->MyDebug(FColor::Red, TEXT("等待更多数据中(没有发现终止符)"));
 					AsyncTask(ENamedThreads::GameThread, [=] {
 						int32 Index = FMath::RandRange(0, 9999);
 						if (FFileHelper::SaveArrayToFile(ReadBuff, *(UTestFunctionLibrary::GetRootPath() + FString::FromInt(Index) + TEXT(".dat")))) {
-							GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, TEXT("暂存位置:") + UTestFunctionLibrary::GetRootPath() + FString::FromInt(Index) + TEXT(".dat"));
+							T->MyDebug(FColor::Red, TEXT("暂存位置:") + UTestFunctionLibrary::GetRootPath() + FString::FromInt(Index) + TEXT(".dat"));
 						}
 					});
 #endif
@@ -92,15 +92,32 @@ void FReadMessageAsyncTask::DoWork() {
 
 				StateIndex = TempBuff[TempBuff.Num() - 1];
 				StateIndex -= 0x30;
-				TempBuff.RemoveAt(TempBuff.Num() - 1);
 
-				ReadBuff.RemoveAt(ReadBuff.Num() - 1);
-				ReadBuff.RemoveAt(ReadBuff.Num() - 1);
-
+				ReadBuff.RemoveAt(ReadBuff.Num() - 3, 3);
 				if (ReadBuff.Num() == 0) {
 					continue;
 				}
 
+				uint8 slen = ReadBuff[ReadBuff.Num() - 1];
+				if (slen > 0) {
+					int StartIndex = ReadBuff.Num() - (slen + 1);
+					FString s = FString::Printf(TEXT("%.*s"), slen / 2, &ReadBuff[StartIndex]);
+					T->MyText(FColor::Orange, s);
+
+					if (s == TEXT("现在进入正常模式"))
+					{
+						T->DebugMode = 0;
+					}
+					else if (s == TEXT("现在进入字幕模式"))
+					{
+						T->DebugMode = 1;
+					}
+					else if (s == TEXT("现在进入除错模式"))
+					{
+						T->DebugMode = 2;
+					}
+				}
+				ReadBuff.RemoveAt(ReadBuff.Num() - (slen + 1), slen + 1);
 
 #pragma region 音频和表情处理部分
 #if !PLATFORM_ANDROID
@@ -131,7 +148,7 @@ void FReadMessageAsyncTask::DoWork() {
 						AsyncTask(ENamedThreads::GameThread, [=] {
 							T->OnDownLoadFileEnd.Broadcast(RedirectFilePath, StateIndex, true);
 							UE_LOG(ReadMessageTaskLog, Error, TEXT("读取到数据量：%d"), RecvSize);
-							GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
+							T->MyDebug(FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
 
 							ReadBuff.Empty();
 							RecvSize = 0;
@@ -165,7 +182,7 @@ void FReadMessageAsyncTask::DoWork() {
 						if (FFileHelper::SaveArrayToFile(ReadBuff, *SaveFilePath)) {
 							T->OnDownLoadFileEnd.Broadcast(SaveFilePath, StateIndex, true);
 							UE_LOG(ReadMessageTaskLog, Error, TEXT("读取到数据量：%d"), RecvSize);
-							GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
+							T->MyDebug(FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
 
 							ReadBuff.Empty();
 							RecvSize = 0;
@@ -177,7 +194,7 @@ void FReadMessageAsyncTask::DoWork() {
 
 #else
 				if (BaseAskDes == nullptr) {
-					GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("BaseAsk为空"));
+					T->MyDebug(FColor::Red, TEXT("BaseAsk为空"));
 					break;
 				}
 
@@ -185,7 +202,7 @@ void FReadMessageAsyncTask::DoWork() {
 
 				auto BaseAsk = google::protobuf::MessageFactory::generated_factory()->GetPrototype(BaseAskDes)->New();
 				if (!BaseAsk->ParseFromArray(ReadBuff.GetData(), ReadBuff.Num())) {
-					GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("尝试解析服务器返回数据错误"));
+					T->MyDebug(FColor::Red, TEXT("尝试解析服务器返回数据错误"));
 					ReadBuff.Empty();
 					continue;
 				}
@@ -193,7 +210,7 @@ void FReadMessageAsyncTask::DoWork() {
 				DigitalLifeNameSpace::BaseMessageType Type = (DigitalLifeNameSpace::BaseMessageType)(BaseAsk->GetReflection()->GetEnumValue(*BaseAsk, BaseAskDes->FindFieldByName("BaseType")));
 				bool Success = BaseAsk->GetReflection()->GetBool(*BaseAsk, BaseAskDes->FindFieldByName("bSuccess"));
 				if (!Success) {
-					GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Green, TEXT("正在等待更多数据，暂时读取：") + FString::FromInt(ReadSize));
+					T->MyDebug(FColor::Green, TEXT("正在等待更多数据，暂时读取：") + FString::FromInt(ReadSize));
 					continue;
 				}
 
@@ -204,7 +221,7 @@ void FReadMessageAsyncTask::DoWork() {
 						{
 							DigitalLifeNameSpace::S_SwitchMesh ServerData;
 							if (!ServerData.ParseFromArray(ReadBuff.GetData(), ReadBuff.Num())) {
-								GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("尝试解析服务器返回数据错误"));
+								T->MyDebug(FColor::Red, TEXT("尝试解析服务器返回数据错误"));
 								ReadBuff.Empty();
 								continue;
 							}
@@ -214,7 +231,7 @@ void FReadMessageAsyncTask::DoWork() {
 						}
 						continue;
 					case DigitalLifeNameSpace::BaseMessageType::BASEMESSAGETYPE_ALLOWEDSAY:
-						GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, TEXT("服务器返回允许说话"));
+						T->MyDebug(FColor::Red, TEXT("服务器返回允许说话"));
 						AsyncTask(ENamedThreads::GameThread, [=] {
 							T->OnWaitServerData.Broadcast();
 						});
@@ -223,7 +240,7 @@ void FReadMessageAsyncTask::DoWork() {
 
 				DigitalLifeNameSpace::S_RetData ServerData;
 				if (!ServerData.ParseFromArray(ReadBuff.GetData(), ReadBuff.Num())) {
-					GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("尝试解析服务器返回音频数据错误"));
+					T->MyDebug(FColor::Red, TEXT("尝试解析服务器返回音频数据错误"));
 					ReadBuff.Empty();
 					continue;
 				}
@@ -263,7 +280,7 @@ void FReadMessageAsyncTask::DoWork() {
 						AsyncTask(ENamedThreads::GameThread, [=] {
 							T->OnDownLoadFileEnd.Broadcast(RedirectFilePath, StateIndex, true);
 							UE_LOG(ReadMessageTaskLog, Error, TEXT("读取到数据量：%d"), RecvSize);
-							GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
+							T->MyDebug(FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
 
 							ReadBuff.Empty();
 							RecvSize = 0;
@@ -299,7 +316,7 @@ void FReadMessageAsyncTask::DoWork() {
 						if (FFileHelper::SaveArrayToFile(WavFileData, *SaveFilePath)) {
 							T->OnDownLoadFileEnd.Broadcast(SaveFilePath, StateIndex, true);
 							UE_LOG(ReadMessageTaskLog, Error, TEXT("读取到数据量：%d"), RecvSize);
-							GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
+							T->MyDebug(FColor::Red, FString(TEXT("读取到数据量：")) + FString::FromInt(RecvSize));
 
 							ReadBuff.Empty();
 							RecvSize = 0;

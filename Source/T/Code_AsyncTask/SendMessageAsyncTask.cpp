@@ -51,7 +51,7 @@ void FSendMessageAsyncTask::DoWork() {
 			}
 			AsyncTask(ENamedThreads::GameThread, [=] {
 				UE_LOG(SendMessageTaskLog, Error, TEXT("发送数据量：%d"), NowSize);
-				GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString(TEXT("发送数据量：")) + FString::FromInt(NowSize));
+				T->MyDebug(FColor::Red, FString(TEXT("发送数据量：")) + FString::FromInt(NowSize));
 
 				T->CloseBuff();
 			});

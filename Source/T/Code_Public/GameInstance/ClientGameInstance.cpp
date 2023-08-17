@@ -101,7 +101,7 @@ bool UClientGameInstance::InitSocketFromString(FString Host, int32 Port) {
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("TCP_Client"), false);
 	Socket->SetNonBlocking();
 	if (!Socket->Connect(*addr)) {
-		GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, FString(ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetSocketError(ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLastErrorCode())));
+		this->MyDebug(FColor::Red, FString(ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetSocketError(ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLastErrorCode())));
 
 		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
 		Socket = nullptr;
@@ -141,7 +141,7 @@ void UClientGameInstance::SendWavFile(FString WavFilePath) {
 		ClientBuffData.Init(0, SendData.ByteSize());
 
 		if (!SendData.SerializeToArray(ClientBuffData.GetData(), ClientBuffData.Num())) {
-			GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("序列化消息失败"));
+			T->MyDebug(FColor::Red, TEXT("序列化消息失败"));
 			return;
 		}
 		ClientBuffData.Add('?');
@@ -211,7 +211,7 @@ void UClientGameInstance::MoveWindowToPos() {
 	int32 Index = GetSystemMetrics(SM_CMONITORS);
 	if (GEngine && GEngine->GameViewport && Index != 1 && GameSaveObject->WindowPoint.X != -1) {
 		GEngine->GameViewport->GetWindow()->MoveWindowTo(GameSaveObject->WindowPoint);
-		GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Yellow, GameSaveObject->WindowPoint.ToString());
+		this->MyDebug(FColor::Yellow, GameSaveObject->WindowPoint.ToString());
 	}
 #endif
 }
@@ -245,4 +245,21 @@ void UClientGameInstance::GameExitEvent() {
 		UGameplayStatics::SaveGameToSlot(GameSaveObject, TEXT("PlayerInfo"), 0);
 	}
 #endif
+}
+
+void UClientGameInstance::MyDebug(FColor DisplayColor, const FString& DebugMessage)
+{
+	if (this->DebugMode < 2) return;
+	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
+}
+
+void UClientGameInstance::MyText(FColor DisplayColor, const FString& DebugMessage)
+{
+	if (this->DebugMode < 1) return;
+	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
+}
+
+void UClientGameInstance::MyInfo(FColor DisplayColor, const FString& DebugMessage)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
 }

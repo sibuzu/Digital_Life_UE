@@ -45,6 +45,8 @@ public:
 		void SetFOV(int32 FOV, float Value);
 	UFUNCTION(BlueprintCallable)
 		void SetQualityIndex(int32 Index);
+	UFUNCTION(BlueprintCallable)
+		void SetDebugLevel(int32 Index);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))

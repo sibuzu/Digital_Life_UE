@@ -28,4 +28,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		int32 QualityIndex = 2;
+	UPROPERTY(BlueprintReadWrite)
+		int32 DebugLevel = 2;
 };

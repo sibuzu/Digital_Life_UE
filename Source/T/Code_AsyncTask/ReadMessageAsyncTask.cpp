@@ -11,6 +11,47 @@ FReadMessageAsyncTask::~FReadMessageAsyncTask() {
 	
 }
 
+void FReadMessageAsyncTask::DisplayText(const FString& text) {
+	UClientGameInstance* T = Cast<UClientGameInstance>(Owner);
+
+	// find <sp> and split it
+	FString Delimiter = TEXT("<sp>");
+
+	TArray<FString> Substrings;
+	text.ParseIntoArray(Substrings, *Delimiter, true);
+
+	if (Substrings.Num() == 2)
+	{
+		FString FirstPart = Substrings[0];
+		FString SecondPart = Substrings[1];
+
+		T->MyText(FColor(173, 216, 230), FirstPart);  // LightBlue
+		T->MyText(FColor::Orange, TEXT("----------"));
+		T->MyText(FColor::Orange, SecondPart);
+	}
+	else
+	{
+		T->MyText(FColor::Orange, text);
+	}
+}
+
+void FReadMessageAsyncTask::DoCommand(const FString& cmd) {
+	UClientGameInstance* T = Cast<UClientGameInstance>(Owner);
+
+	if (cmd == TEXT("现在进入正常模式"))
+	{
+		T->DebugMode = 0;
+	}
+	else if (cmd == TEXT("现在进入字幕模式"))
+	{
+		T->DebugMode = 1;
+	}
+	else if (cmd == TEXT("现在进入除错模式"))
+	{
+		T->DebugMode = 2;
+	}
+}
+
 void FReadMessageAsyncTask::DoWork() {
 	UClientGameInstance* T = Cast<UClientGameInstance>(Owner);
 	while (true) {
@@ -98,26 +139,15 @@ void FReadMessageAsyncTask::DoWork() {
 					continue;
 				}
 
-				uint8 slen = ReadBuff[ReadBuff.Num() - 1];
+				uint16 slen = ReadBuff[ReadBuff.Num() - 2] * 256 + ReadBuff[ReadBuff.Num() - 1];
 				if (slen > 0) {
-					int StartIndex = ReadBuff.Num() - (slen + 1);
+					int32 StartIndex = ReadBuff.Num() - (slen + 2);
 					FString s = FString::Printf(TEXT("%.*s"), slen / 2, &ReadBuff[StartIndex]);
-					T->MyText(FColor::Orange, s);
 
-					if (s == TEXT("现在进入正常模式"))
-					{
-						T->DebugMode = 0;
-					}
-					else if (s == TEXT("现在进入字幕模式"))
-					{
-						T->DebugMode = 1;
-					}
-					else if (s == TEXT("现在进入除错模式"))
-					{
-						T->DebugMode = 2;
-					}
+					DoCommand(s);
+					DisplayText(s);
 				}
-				ReadBuff.RemoveAt(ReadBuff.Num() - (slen + 1), slen + 1);
+				ReadBuff.RemoveAt(ReadBuff.Num() - (slen + 2), slen + 2);
 
 #pragma region 音频和表情处理部分
 #if !PLATFORM_ANDROID

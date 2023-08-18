@@ -33,6 +33,8 @@ public:
 
 public:
 	void DoWork();
+	void DoCommand(const FString& cmd);
+	void DisplayText(const FString& text);
 
 #if !PLATFORM_ANDROID
 	const FString SaveFilePath = UTestFunctionLibrary::GetRootPath() / TEXT("Temp/Read.wav");

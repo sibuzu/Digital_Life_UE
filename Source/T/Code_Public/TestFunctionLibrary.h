@@ -45,7 +45,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		static bool IsDeubgMode() {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-		return true;
+		// return true;
 #endif
 		return false;
 		}

@@ -4,6 +4,7 @@
 #include "../Code_Public/Tools/JsonObjectConverterEx.h"
 #include "../Code_Public/GameInstance/ClientGameInstance.h"
 #include "../Code_Public/Struct/PublicStruct.h"
+#include "../Code_Public/MyGlobal.h"
 
 DEFINE_LOG_CATEGORY(ReadMessageTaskLog);
 
@@ -25,6 +26,7 @@ void FReadMessageAsyncTask::DisplayText(const FString& text) {
 		FString FirstPart = Substrings[0];
 		FString SecondPart = Substrings[1];
 
+		T->MyText(FColor::Orange, TEXT("----------"));
 		T->MyText(FColor(173, 216, 230), FirstPart);  // LightBlue
 		T->MyText(FColor::Orange, TEXT("----------"));
 		T->MyText(FColor::Orange, SecondPart);
@@ -38,17 +40,14 @@ void FReadMessageAsyncTask::DisplayText(const FString& text) {
 void FReadMessageAsyncTask::DoCommand(const FString& cmd) {
 	UClientGameInstance* T = Cast<UClientGameInstance>(Owner);
 
-	if (cmd == TEXT("现在进入正常模式"))
-	{
-		T->DebugMode = 0;
+	if (cmd == TEXT("現在進入正常模式")) {
+		MyGlobal::SaveDebugLevel(0);
 	}
-	else if (cmd == TEXT("现在进入字幕模式"))
-	{
-		T->DebugMode = 1;
+	else if (cmd == TEXT("現在進入字幕模式")) {
+		MyGlobal::SaveDebugLevel(1);
 	}
-	else if (cmd == TEXT("现在进入除错模式"))
-	{
-		T->DebugMode = 2;
+	else if (cmd == TEXT("現在進入除錯模式")) {
+		MyGlobal::SaveDebugLevel(2);
 	}
 }
 

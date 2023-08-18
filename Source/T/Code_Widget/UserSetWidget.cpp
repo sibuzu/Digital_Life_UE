@@ -1,6 +1,8 @@
 #include "UserSetWidget.h"
 
 #include "HAL/PlatformFramePacer.h"
+#include "../Code_Public/GameInstance/ClientGameInstance.h"
+#include "../Code_Public/MyGlobal.h"
 
 void UUserSetWidget::NativePreConstruct() {
 	Super::NativePreConstruct();
@@ -75,7 +77,7 @@ void UUserSetWidget::ApplySaveSet() {
 		UpdateDebugSetting(GameSaveObject->DebugLevel);
 		DebugLevel = GameSaveObject->DebugLevel;
 
-		GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: ") + FString::FromInt(DebugLevel));
+		// GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: ") + FString::FromInt(DebugLevel));
 	}
 }
 
@@ -143,12 +145,5 @@ void UUserSetWidget::SetQualityIndex(int32 Index) {
 }
 
 void UUserSetWidget::SetDebugLevel(int32 Value) {
-	if (UGameplayStatics::DoesSaveGameExist(TEXT("PlayerInfo"), 0)) {
-		UGameSaveObject* GameSaveObject = Cast<UGameSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("PlayerInfo"), 0));
-
-		GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("SetDebugLevel: ") + FString::FromInt(Value));
-
-		GameSaveObject->DebugLevel = Value;
-		UGameplayStatics::SaveGameToSlot(GameSaveObject, TEXT("PlayerInfo"), 0);
-	}
+	MyGlobal::SaveDebugLevel(Value);
 }

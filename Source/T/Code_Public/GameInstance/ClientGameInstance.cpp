@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "../GameSaveObject.h"
+#include "../MyGlobal.h"
 
 #if PLATFORM_WINDOWS
 
@@ -247,19 +248,16 @@ void UClientGameInstance::GameExitEvent() {
 #endif
 }
 
-void UClientGameInstance::MyDebug(FColor DisplayColor, const FString& DebugMessage)
-{
-	if (this->DebugMode < 2) return;
+void UClientGameInstance::MyDebug(FColor DisplayColor, const FString& DebugMessage) {
+	if (MyGlobal::DebugLevel < 2) return;
 	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
 }
 
-void UClientGameInstance::MyText(FColor DisplayColor, const FString& DebugMessage)
-{
-	if (this->DebugMode < 1) return;
+void UClientGameInstance::MyText(FColor DisplayColor, const FString& DebugMessage) {
+	if (MyGlobal::DebugLevel < 1) return;
 	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
 }
 
-void UClientGameInstance::MyInfo(FColor DisplayColor, const FString& DebugMessage)
-{
+void UClientGameInstance::MyInfo(FColor DisplayColor, const FString& DebugMessage) {
 	GEngine->AddOnScreenDebugMessage(-1, 1000.f, DisplayColor, DebugMessage);
 }

@@ -22,6 +22,8 @@
 #include "Android/AndroidJavaEnv.h"
 #endif
 
+#include "MyGlobal.h"
+
 #include "TestFunctionLibrary.generated.h"
 
 UCLASS()
@@ -44,10 +46,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		static bool IsDeubgMode() {
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-		// return true;
-#endif
-		return false;
+			return MyGlobal::DebugLevel == 2;
 		}
 
 	UFUNCTION(BlueprintCallable)

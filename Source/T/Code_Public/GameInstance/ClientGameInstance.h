@@ -117,11 +117,10 @@ public:
 
 	TArray<FAttachWavFileInfo> AttachWavFilePathList;
 
-	int DebugMode = 2;   // 0: normal, 1: cc, 2: debug
-	int Version = 1;
 	void MyInfo(FColor DisplayColor, const FString& DebugMessage);
 	void MyText(FColor DisplayColor, const FString& DebugMessage);
 	void MyDebug(FColor DisplayColor, const FString& DebugMessage);
+
 
 public:
 	UPROPERTY(BlueprintReadWrite)

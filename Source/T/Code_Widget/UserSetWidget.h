@@ -33,6 +33,8 @@ public:
 		void UpdateWindowState(bool IsClick);
 	UFUNCTION(BlueprintImplementableEvent)
 		void UpdateQualitySetting(int32 Index);
+	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateDebugSetting(int32 Index);
 
 	UFUNCTION(BlueprintCallable)
 		void ApplySaveSet();
@@ -63,4 +65,6 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite)
 		float FOVValue = 0.f;
+	UPROPERTY(BlueprintReadWrite)
+		int32 DebugLevel = 2;
 };

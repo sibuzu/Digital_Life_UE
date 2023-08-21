@@ -1,5 +1,32 @@
+若是安裝完UE後，右鍵沒有出現unreal 相關功能
+將 E:\Epic Games\Launcher\Engine\Binaries\Win64\UnrealVersionSelector.exe
+COPY 到
+E:\Epic Games\UE_5.0\Engine\Binaries\Win64\
+然後用 adminstrator 執行。
 
-You need to edit GameActivity.java file. 
-It’s located in “Unreal Engine\5.0\Engine\Build\Android\Java\src\com\epicgames\ue4” 
+You need to edit GameActivity.java.template file. 
+It’s located in “Unreal Engine\5.0\Engine\Build\Android\Java\src\com\epicgames\unreal\GameActivity.java.template” 
 and add this line AndroidThunkJava_KeepScreenOn(true); after “nativeResumeMainInit();”
 
+## android studio
+ERROR:
+Check SDK section of the Launch On menu in the main toolbar to update SDK
+
+SOLUTION: 
+1. install ndk
+Android Studio -> Tools -> SDK Manager -> Android SDK -> NDK(Side by Side)
+
+2 install java if needed
+JAVA_HOME 要設對
+verify java -version
+it must be >= 17
+
+https://www.oracle.com/java/technologies/downloads/#jdk20-windows or
+https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-17
+
+3 in UE
+Open the Engine/Extras/Android directory and  SetupAndroid.bat
+修改 SetupAndroid.bat
+>> set SDKMANAGER=%STUDIO_SDK_PATH%\tools\bin\sdkmanager.bat 
+set SDKMANAGER=%STUDIO_SDK_PATH%\cmdline-tools\latest\bin\sdkmanager.bat
+執行 SetupAndroid.bat

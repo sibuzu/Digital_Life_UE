@@ -23,8 +23,8 @@ void FSendMessageAsyncTask::DoWork() {
 
 		BuffSize = 0;
 #if NO_PROTOBUF
-		if (T->BuffDataSize > 3) {
-			if (T->ClientBuffData[T->BuffDataSize - 1] == '!' && T->ClientBuffData[T->BuffDataSize - 2] == '?') {
+		if (T->BuffDataSize > 4) {
+			if (T->ClientBuffData[T->BuffDataSize - 2] == '!' && T->ClientBuffData[T->BuffDataSize - 3] == '?') {
 
 				Buff = T->ClientBuffData;
 				BuffSize = Buff.Num();

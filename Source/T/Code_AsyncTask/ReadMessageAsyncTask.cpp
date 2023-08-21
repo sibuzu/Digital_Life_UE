@@ -131,7 +131,6 @@ void FReadMessageAsyncTask::DoWork() {
 				RecvSize += NowSize;
 
 				StateIndex = TempBuff[TempBuff.Num() - 1];
-				StateIndex -= 0x30;
 
 				ReadBuff.RemoveAt(ReadBuff.Num() - 3, 3);
 				if (ReadBuff.Num() == 0) {

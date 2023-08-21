@@ -127,9 +127,11 @@ void UClientGameInstance::SendWavFile(FString WavFilePath) {
 		FScopeLock ScopeLock(&Lock_TestValue);
 		TArray<uint8> WavFileBuff;
 		FFileHelper::LoadFileToArray(WavFileBuff, *WavFilePath);
+		uint8 mlang = 0;
 #if NO_PROTOBUF
 		WavFileBuff.Add('?');
 		WavFileBuff.Add('!');
+		WavFileBuff.Add(mlang);
 
 		ClientBuffData = WavFileBuff;
 		BuffDataSize = WavFileBuff.Num();
@@ -147,6 +149,7 @@ void UClientGameInstance::SendWavFile(FString WavFilePath) {
 		}
 		ClientBuffData.Add('?');
 		ClientBuffData.Add('!');
+		ClientBuffData.Add(mlang);
 
 		BuffDataSize = ClientBuffData.Num();
 #endif

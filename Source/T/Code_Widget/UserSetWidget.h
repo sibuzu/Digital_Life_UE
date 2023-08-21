@@ -34,6 +34,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void UpdateQualitySetting(int32 Index);
 	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateActorSetting(int32 Index);
+	UFUNCTION(BlueprintImplementableEvent)
 		void UpdateDebugSetting(int32 Index);
 
 	UFUNCTION(BlueprintCallable)
@@ -47,6 +49,8 @@ public:
 		void SetFOV(int32 FOV, float Value);
 	UFUNCTION(BlueprintCallable)
 		void SetQualityIndex(int32 Index);
+	UFUNCTION(BlueprintCallable)
+		void SetActorIndex(int32 Index);
 	UFUNCTION(BlueprintCallable)
 		void SetDebugLevel(int32 Index);
 
@@ -65,6 +69,8 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite)
 		float FOVValue = 0.f;
+	UPROPERTY(BlueprintReadWrite)
+		int32 ActorIndex = 0;
 	UPROPERTY(BlueprintReadWrite)
 		int32 DebugLevel = 2;
 };

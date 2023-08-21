@@ -74,10 +74,16 @@ void UUserSetWidget::ApplySaveSet() {
 #endif
 
 		UpdateQualitySetting(GEngine->GameUserSettings->GetTextureQuality());
+		UpdateActorSetting(GameSaveObject->ActorIndex);
+		ActorIndex = GameSaveObject->ActorIndex;
+		
 		UpdateDebugSetting(GameSaveObject->DebugLevel);
 		DebugLevel = GameSaveObject->DebugLevel;
 
-		// GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: ") + FString::FromInt(DebugLevel));
+		if (DebugLevel==2) {
+			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: ActorIndex=") + FString::FromInt(ActorIndex));
+			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: DebugLevel=") + FString::FromInt(DebugLevel));
+		}	
 	}
 }
 
@@ -142,6 +148,10 @@ void UUserSetWidget::SetQualityIndex(int32 Index) {
 
 	Setting->ApplySettings(true);
 	Setting->SaveSettings();
+}
+
+void UUserSetWidget::SetActorIndex(int32 Value) {
+	MyGlobal::SaveActorIndex(Value);
 }
 
 void UUserSetWidget::SetDebugLevel(int32 Value) {

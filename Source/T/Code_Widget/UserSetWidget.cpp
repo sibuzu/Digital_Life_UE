@@ -81,8 +81,8 @@ void UUserSetWidget::ApplySaveSet() {
 		DebugLevel = GameSaveObject->DebugLevel;
 
 		if (DebugLevel==2) {
-			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: ActorIndex=") + FString::FromInt(ActorIndex));
-			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: DebugLevel=") + FString::FromInt(DebugLevel));
+			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: *ActorIndex=") + FString::FromInt(ActorIndex));
+			GEngine->AddOnScreenDebugMessage(-1, 1000.f, FColor::Red, FString("ApplySaveSet: *DebugLevel=") + FString::FromInt(DebugLevel));
 		}	
 	}
 }

@@ -19,14 +19,27 @@ Android Studio -> Tools -> SDK Manager -> Android SDK -> NDK(Side by Side)
 2 install java if needed
 JAVA_HOME 要設對
 verify java -version
-it must be >= 17
+it must be == 14 (11, 17 both failed)
 
 https://www.oracle.com/java/technologies/downloads/#jdk20-windows or
 https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-17
 
-3 in UE
+3. E:\Epic Games\UE_5.0\Engine\Build\Android\Java\gradle\gradle\wrapper\gradle-wrapper.properties
+distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip =>
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.3-all.zip
+7.3 is because JDK 17, according to https://docs.gradle.org/current/userguide/compatibility.html
+
+4. in UE
 Open the Engine/Extras/Android directory and  SetupAndroid.bat
 修改 SetupAndroid.bat
 >> set SDKMANAGER=%STUDIO_SDK_PATH%\tools\bin\sdkmanager.bat 
 set SDKMANAGER=%STUDIO_SDK_PATH%\cmdline-tools\latest\bin\sdkmanager.bat
 執行 SetupAndroid.bat
+"E:\Epic Games\UE_5.0\Engine\Extras\Android\SetupAndroid.bat"
+
+5. Caused by: java.lang.ExceptionInInitializerError: Exception org.codehaus.groovy.GroovyBugError [in thread "Daemon worker"]
+<Project Setting>
+Minimum SDK version = 21
+NDK API level = latest
+(可能不需要，這個問題是將 gradle-6.1.1 => 6.3 解決，6.3 最好是用JDK 14)
+

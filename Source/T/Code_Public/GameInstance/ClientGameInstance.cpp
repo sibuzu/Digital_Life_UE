@@ -127,7 +127,8 @@ void UClientGameInstance::SendWavFile(FString WavFilePath) {
 		FScopeLock ScopeLock(&Lock_TestValue);
 		TArray<uint8> WavFileBuff;
 		FFileHelper::LoadFileToArray(WavFileBuff, *WavFilePath);
-		uint8 mlang = 0;
+		uint8 mlang = MyGlobal::VoiceLang * 10 + MyGlobal::ActorIndex;
+
 #if NO_PROTOBUF
 		WavFileBuff.Add('?');
 		WavFileBuff.Add('!');

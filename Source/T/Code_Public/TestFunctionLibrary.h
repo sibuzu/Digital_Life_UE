@@ -61,6 +61,10 @@ public:
 				FPlatformFileManager::Get().GetPlatformFile().DeleteDirectoryRecursively(*DirPath);
 			}
 		}
+	UFUNCTION(BlueprintCallable)
+		static void SetVoiceLang(int32 lang) {
+			MyGlobal::VoiceLang = lang;
+		}
 
 	UFUNCTION(BlueprintCallable)
 		static void InitRecorder(FString Path);

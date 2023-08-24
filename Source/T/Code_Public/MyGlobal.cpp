@@ -5,6 +5,7 @@
  
 int32 MyGlobal::ActorIndex = 0;
 int32 MyGlobal::DebugLevel = 0;
+int32 MyGlobal::VoiceLang = 0;
 void MyGlobal::SaveActorIndex(int32 Value) {
 	MyGlobal::ActorIndex = Value;
 
